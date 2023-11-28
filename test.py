@@ -123,8 +123,8 @@ player1_state = "idle"  # начальное состояние
 player2_state = "idle"  # начальное состояние
 
 # # Игровые объекты и переменные для прыжка
-player1 = pygame.Rect(50, HEIGHT - 100, 50, 50)
-player2 = pygame.Rect(200, HEIGHT - 100, 50, 50)
+player1 = pygame.Rect(50, HEIGHT - 150, 150, 150)
+player2 = pygame.Rect(200, HEIGHT - 150, 150, 150)
 players = [player1, player2]
 is_jumping = [False, False]
 jump_count = [JUMP_HEIGHT, JUMP_HEIGHT]
