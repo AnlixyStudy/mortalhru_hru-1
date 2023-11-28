@@ -25,17 +25,17 @@ clock = pygame.time.Clock()
 
 # Загрузка изображений персонажей
 player1_images = {
-    "idle": pygame.image.load("images/hero3.png"),
-    "attack": pygame.image.load("images/hero3.png"),
-    "jump": pygame.image.load("images/hero3.png"),
-    "crouch": pygame.image.load("images/hero3.png"),
+    "idle": pygame.image.load("images/hero3pixel.png"),
+    "attack": pygame.image.load("images/hero3pixel.png"),
+    "jump": pygame.image.load("images/hero3pixel.png"),
+    "crouch": pygame.image.load("images/hero3pixel.png"),
 }
 
 player2_images = {
-    "idle": pygame.image.load("images/hero2.png"),
-    "attack": pygame.image.load("images/hero2.png"),
-    "jump": pygame.image.load("images/hero2.png"),
-    "crouch": pygame.image.load("images/hero2.png"),
+    "idle": pygame.image.load("images/hero2pixel.png"),
+    "attack": pygame.image.load("images/hero2pixel.png"),
+    "jump": pygame.image.load("images/hero2pixel.png"),
+    "crouch": pygame.image.load("images/hero2pixel.png"),
 }
 background_image = pygame.image.load("images/mario-background.jpg")
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
@@ -49,7 +49,7 @@ def draw_players():
     # Handle keyboard events
     for event in pygame.event.get():
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_w:
                 player1_state = "jump"
             elif event.key == pygame.K_LCTRL:
                 player1_state = "crouch"
