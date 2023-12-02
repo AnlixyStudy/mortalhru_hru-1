@@ -1,5 +1,6 @@
 import pygame
 import sys
+import random
 
 pygame.init()
 
@@ -39,7 +40,6 @@ player2_images = {
 }
 background_image = pygame.image.load("images/mario-background.jpg")
 background_image = pygame.transform.scale(background_image, (WIDTH, HEIGHT))
-
 
 GROUND_LEVEL = HEIGHT - PLATFORM_HEIGHT - player2_images["idle"].get_height() 
 def draw_players():
@@ -91,8 +91,6 @@ def draw_players():
         
     else:
         player2_image = player2_images["idle"]
-       
-
 
     scaled_player1_image = pygame.transform.scale(player1_image, (player1.width, player1.height))
     screen.blit(scaled_player1_image, player1)
@@ -144,6 +142,8 @@ while running:
     keys = pygame.key.get_pressed()
 
     # Управление игроком 1
+    if keys[pygame.K_ESCAPE]:
+        import menu_test
     if keys[pygame.K_a]:
         player1.x -= 3
         player1_state = "idle"
@@ -200,21 +200,7 @@ while running:
         move_direction = -0.8
 
     # Автоматическое движение синего квадрата с учётом скорости
-    player2.x += enemy_speed * move_direction
-
-    # # Добавляем прыжок для синего квадрата при приближении красного
-    # if player1.colliderect(player2) and not is_jumping[1]:
-    #     is_jumping[1] = True
-    #     jump_count[1] = JUMP_HEIGHT
-    #     player2_state = "jump"
-
-    # if is_jumping[1]:
-    #     if jump_count[1] >= -JUMP_HEIGHT:
-    #          player2.y -= (jump_count[1] ** 2) * 0.5 * GRAVITY
-    #          jump_count[1] -= 1
-    #     else:
-    #          is_jumping[1] = False
-    #          jump_count[1] = JUMP_HEIGHT
+    player2.x += enemy_speed * move_direction 
 
     # Добавляем приседание для синего квадрата при приближении красного
     if player1.colliderect(player2) and not is_jumping[1]:
@@ -240,7 +226,7 @@ while running:
 
 
     if health[1] <= 0:
-        sys.exit()
+        import menu_test
 
     # Отрисовка
     screen.blit(background_image, (0, 0))
@@ -255,7 +241,6 @@ while running:
     text = font.render(f"Player 2 Health: {health[1]}", True, BLUE)
     screen.blit(text, (WIDTH - text.get_width() - 10, 10))
    
-
     pygame.display.flip()
 
     # Ограничения перемещения игроков в пределах экрана
