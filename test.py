@@ -9,7 +9,6 @@ COOLDOWN_TIME = 1  # Кулдаун в секундах
 GRAVITY = 0.75  # Гравитация 
 
 JUMP_HEIGHT = 10  # Высота прыжка
-JUMP_COOLDOWN = 50  # Кулдаун для прыжков в кадрах
 JUMP_SPEED = 1  # Скорость подпрыгивания
 
 WHITE = (255, 255, 255)
@@ -106,13 +105,14 @@ platform = pygame.Rect(0, HEIGHT - PLATFORM_HEIGHT, WIDTH, PLATFORM_HEIGHT)
 
 # Установка параметров прыжка
 is_jumping = [False, False]
+is_crouching = [False, False]
 jump_count = [JUMP_HEIGHT, JUMP_HEIGHT]
 
 # Характеристики здоровья игроков
 health = [PLAYER_HEALTH, PLAYER_HEALTH]
 
 # Cooldown для ударов
-cooldowns = [0, 0]
+cooldowns = [0, 0, 0]
 
 # ИИ для игрока 2 (синий куб)
 enemy_cooldown = 0
@@ -150,34 +150,47 @@ while running:
         player1.x += 3
         player1_state = "idle"
     if keys[pygame.K_s] and not is_jumping[0]:
-        player1.y += 5 
+        is_crouching[0] = True
         player1_state = "crouch"
-    if keys[pygame.K_w] and not is_jumping[0] and jump_cooldown[0] == 0:
+    # В обработчике событий/управления персонажем
+    if keys[pygame.K_w] and not is_jumping[0]:
         is_jumping[0] = True
-        jump_speed[0] = JUMP_SPEED
-        jump_cooldown[0] = JUMP_COOLDOWN
-        player1_state = "jump"
+        jump_count[0] = JUMP_HEIGHT
+        player1_state = 'jump'  # Устанавливаем начальную высоту прыжка
 
+    # В цикле игры
     if is_jumping[0]:
         if jump_count[0] >= -JUMP_HEIGHT:
-           player1.y -= (jump_count[0] ** 2) * 0.5 * GRAVITY
-           jump_count[0] -= 1
+            # Обновляем координаты по вертикали в зависимости от высоты прыжка
+            player1.y -= (jump_count[0] ** 2) * 0.5 * GRAVITY
+            jump_count[0] -= 1  # Уменьшаем высоту прыжка
         else:
-            is_jumping[0] = False
-            jump_count[0] = JUMP_HEIGHT
+            is_jumping[0] = False  # Завершаем прыжок
 
-    for i in range(2):
-        if is_jumping[i]:
-             if jump_speed[i] >= -JUMP_SPEED:
-                 players[i].y -= jump_speed[i]
-                 jump_speed[i] -= 1
-        else:
-               is_jumping[i] = False
-               jump_speed[i] = 0  # Сброс скорости
+    # Обработка столкновений с платформой и другими объектами
+    if player1.colliderect(platform):
+        if is_jumping[0]:
+            is_jumping[0] = False  # Останавливаем прыжок
+            jump_count[0] = JUMP_HEIGHT  # Сбрасываем высоту прыжка
+        player1.y = platform.top - player1.height  # Выравниваем персонажа с платформой
 
-        if players[i].colliderect(platform):
-            jump_cooldown[i] = JUMP_COOLDOWN  # Установка кулдауна
+    # В цикле игры
+    if is_crouching[0]:
+    # Устанавливаем новые параметры для персонажа в состоянии приседания
+        player1.height = 50  # Примерно половина высоты персонажа
+        # Изменяем его координаты, чтобы он оставался на платформе
+        if player1.colliderect(platform):
+            player1.y = platform.top - player1.height
 
+    # Проверяем, если кнопка S больше не нажата
+    if not keys[pygame.K_s]:
+        # Сбрасываем состояние приседания
+        is_crouching[0] = False
+        # Возвращаем исходную высоту персонажу
+        player1.height = 150
+        # Также нужно обновить его координаты, чтобы он оставался на платформе, если он на ней стоит
+        if player1.colliderect(platform):
+            player1.y = platform.top - player1.height
 
 
     # ИИ для игрока 2
@@ -191,18 +204,18 @@ while running:
     player2.x += enemy_speed * move_direction
 
     # # Добавляем прыжок для синего квадрата при приближении красного
-    if player1.colliderect(player2) and not is_jumping[1]:
-        is_jumping[1] = True
-        jump_count[1] = JUMP_HEIGHT
-        player2_state = "jump"
+    # if player1.colliderect(player2) and not is_jumping[1]:
+    #     is_jumping[1] = True
+    #     jump_count[1] = JUMP_HEIGHT
+    #     player2_state = "jump"
 
-    if is_jumping[1]:
-        if jump_count[1] >= -JUMP_HEIGHT:
-             player2.y -= (jump_count[1] ** 2) * 0.5 * GRAVITY
-             jump_count[1] -= 1
-        else:
-             is_jumping[1] = False
-             jump_count[1] = JUMP_HEIGHT
+    # if is_jumping[1]:
+    #     if jump_count[1] >= -JUMP_HEIGHT:
+    #          player2.y -= (jump_count[1] ** 2) * 0.5 * GRAVITY
+    #          jump_count[1] -= 1
+    #     else:
+    #          is_jumping[1] = False
+    #          jump_count[1] = JUMP_HEIGHT
 
     # Добавляем приседание для синего квадрата при приближении красного
     if player1.colliderect(player2) and not is_jumping[1]:
