@@ -38,9 +38,7 @@ while True:
             mouse_pos = event.pos
             if new_game_button.collidepoint(mouse_pos):
                 print("Нажата кнопка 'Новая игра'")
-
-            elif setting_rect.collidepoint(mouse_pos):
-                print('setting menu')
+                import test
                
             elif load_game_button.collidepoint(mouse_pos):
                 print("Нажата кнопка 'Загрузить игру'")
@@ -54,7 +52,6 @@ while True:
     
     title_rect = draw_text("Игровое меню", font, white, screen, 700, 200)
     new_game_rect = draw_text("Новая игра", font, white, screen, 700, 400)
-    setting_rect = draw_text("Настройки", font, white, screen, 700, 400)
     load_game_rect = draw_text("Загрузить игру", font, white, screen, 700, 550)
     exit_rect = draw_text("Выход", font, white, screen, 700, 700)
     

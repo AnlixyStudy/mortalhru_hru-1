@@ -1,9 +1,10 @@
 import pygame
+import sys
 
 pygame.init()
 
 # Определение основных констант
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 1920, 1080
 FPS = 60
 COOLDOWN_TIME = 1  # Кулдаун в секундах
 GRAVITY = 0.75  # Гравитация 
@@ -18,7 +19,7 @@ PLATFORM_HEIGHT = 30
 PLAYER_HEALTH = 100
 
 # Установка окна
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("Mortal Kombat Lite")
 clock = pygame.time.Clock()
 
@@ -150,7 +151,7 @@ while running:
         player1.x += 3
         player1_state = "idle"
     if keys[pygame.K_s] and not is_jumping[0]:
-        is_crouching[0] = True
+        is_crouching[0]  = True
         player1_state = "crouch"
     # В обработчике событий/управления персонажем
     if keys[pygame.K_w] and not is_jumping[0]:
@@ -158,7 +159,6 @@ while running:
         jump_count[0] = JUMP_HEIGHT
         player1_state = 'jump'  # Устанавливаем начальную высоту прыжка
 
-    # В цикле игры
     if is_jumping[0]:
         if jump_count[0] >= -JUMP_HEIGHT:
             # Обновляем координаты по вертикали в зависимости от высоты прыжка
@@ -174,7 +174,6 @@ while running:
             jump_count[0] = JUMP_HEIGHT  # Сбрасываем высоту прыжка
         player1.y = platform.top - player1.height  # Выравниваем персонажа с платформой
 
-    # В цикле игры
     if is_crouching[0]:
     # Устанавливаем новые параметры для персонажа в состоянии приседания
         player1.height = 50  # Примерно половина высоты персонажа
@@ -196,9 +195,9 @@ while running:
     # ИИ для игрока 2
     # Проверяем позицию красного квадрата относительно синего и изменяем направление движения
     if player1.x > player2.x:
-        move_direction = 1
+        move_direction = 0.8
     elif player1.x < player2.x:
-        move_direction = -1
+        move_direction = -0.8
 
     # Автоматическое движение синего квадрата с учётом скорости
     player2.x += enemy_speed * move_direction
@@ -222,15 +221,26 @@ while running:
         player2.y += 5  # Это значение можно изменить для корректного отображения
 
     # Обработка атак с учетом Cooldown'а
-    if cooldowns[0] > 0:
-        cooldowns[0] -= 1
-    if keys[pygame.K_SPACE] and player1.colliderect(player2) and cooldowns[1] == 0:  # Удар в присяги
-        health[1] -= 10
-        player1_state = "attack"
+    if cooldowns[1] > 0:
+       cooldowns[1] -= 1
+    
+    if keys[pygame.K_SPACE] and player1.colliderect(player2) and cooldowns[1] == 0:
+        if is_jumping[0]:
+            health[1] -= 20 
+        
+        elif is_crouching[0]:
+            health[1] -= 15
+            player1_state = "crouch_attack"
+
+        else:
+            health[1] -= 10
+            player1_state = "attack"
+            
         cooldowns[1] = FPS * COOLDOWN_TIME  # Установка Cooldown'а
-    if is_jumping[0] and player1.colliderect(player2) and cooldowns[2] == 0:  # Удар в прыжке
-        health[1] -= 20
-        cooldowns[2] = FPS * COOLDOWN_TIME  # Установка Cooldown'а
+
+
+    if health[1] <= 0:
+        sys.exit()
 
     # Отрисовка
     screen.blit(background_image, (0, 0))
